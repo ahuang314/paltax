@@ -315,6 +315,14 @@ class CosmosCatalog(Interpol):
         pixel_sizes = self.hdf5_file['pixel_sizes'][start_val:end_val]
         redshifts = self.hdf5_file['redshifts'][start_val:end_val]
         images = self.hdf5_file['images'][start_val:end_val]
+        # Options for parameter are asymmetry, axial_ratio, concpetro, gini, m20, rhalfreal, rpetroreal
+        asymmetry = self.hdf5_file['asymmetry'][start_val:end_val]
+        axial_ratio = self.hdf5_file['axial_ratio'][start_val:end_val]
+        concpetro = self.hdf5_file['concpetro'][start_val:end_val]
+        gini = self.hdf5_file['gini'][start_val:end_val]
+        m20 = self.hdf5_file['m20'][start_val:end_val]
+        rhalfreal = self.hdf5_file['rhalfreal'][start_val:end_val]
+        rpetroreal = self.hdf5_file['rpetroreal'][start_val:end_val]
         cosmology_params['cosmos_n_images'] = len(images)
 
 
@@ -322,6 +330,13 @@ class CosmosCatalog(Interpol):
         cosmology_params['cosmos_pixel_sizes'] = jnp.array(pixel_sizes)
         cosmology_params['cosmos_redshifts'] = jnp.array(redshifts)
         cosmology_params['cosmos_images'] = jnp.array(images)
+        cosmology_params['cosmos_asymmetry'] = jnp.array(asymmetry)
+        cosmology_params['cosmos_axial_ratio'] = jnp.array(axial_ratio)
+        cosmology_params['cosmos_concpetro'] = jnp.array(concpetro)
+        cosmology_params['cosmos_gini'] = jnp.array(gini)
+        cosmology_params['cosmos_m20'] = jnp.array(m20)
+        cosmology_params['cosmos_rhalfreal'] = jnp.array(rhalfreal)
+        cosmology_params['cosmos_rpetroreal'] = jnp.array(rpetroreal)
 
         # Increment the chunk counter; reset to 0 if we've already loaded all chunkes
         self.chunk_number = jnp.where(end_val >= self.total_num_galaxies, 0, self.chunk_number + 1)
@@ -346,7 +361,7 @@ class CosmosCatalog(Interpol):
                 units.
         """
         # Select the galaxy incdex from the uniform distribution.
-        galaxy_index = jnp.floor(
+        galaxy_index = jnp.round(
             all_kwargs['galaxy_index'] * cosmology_params['cosmos_n_images']
         ).astype(int)
 
@@ -405,6 +420,15 @@ class CosmosCatalog(Interpol):
         all_kwargs['image'] = image
         all_kwargs['amp'] = amp
         all_kwargs['scale'] = pixel_scale
+        all_kwargs['galaxy_index'] = galaxy_index
+        all_kwargs['source_morphology_params'] = {}
+        all_kwargs['source_morphology_params']['asymmetry'] = cosmology_params['cosmos_asymmetry'][galaxy_index]
+        all_kwargs['source_morphology_params']['axial_ratio'] = cosmology_params['cosmos_axial_ratio'][galaxy_index]
+        all_kwargs['source_morphology_params']['concpetro'] = cosmology_params['cosmos_concpetro'][galaxy_index]
+        all_kwargs['source_morphology_params']['gini'] = cosmology_params['cosmos_gini'][galaxy_index]
+        all_kwargs['source_morphology_params']['m20'] = cosmology_params['cosmos_m20'][galaxy_index]
+        all_kwargs['source_morphology_params']['rhalfreal'] = cosmology_params['cosmos_rhalfreal'][galaxy_index]
+        all_kwargs['source_morphology_params']['rpetroreal'] = cosmology_params['cosmos_rpetroreal'][galaxy_index]
 
         return all_kwargs
 

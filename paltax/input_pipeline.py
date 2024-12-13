@@ -877,4 +877,4 @@ def draw_image_and_truth(
         all_params, normalize_config, truth_parameters,
         rotation_angle, normalize_truths)
 
-    return image, truth
+    return image, truth, source_params['source_morphology_params'], source_params['galaxy_index']
