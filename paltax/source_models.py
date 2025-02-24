@@ -406,6 +406,7 @@ class CosmosCatalog(Interpol):
         # of the input survey and the output survey. Note this doesn't
         # take into account the color of the object.
         amp = all_kwargs['amp']
+        amp2 = amp
         amp *= 10 ** (
             (all_kwargs['output_ab_zeropoint'] -
              all_kwargs['catalog_ab_zeropoint']) / 2.5)
@@ -421,6 +422,8 @@ class CosmosCatalog(Interpol):
         all_kwargs['amp'] = amp
         all_kwargs['scale'] = pixel_scale
         all_kwargs['galaxy_index'] = galaxy_index
+
+        # These are parameters with change with galaxy index, i.e. they are the same across realizations for each source
         all_kwargs['source_morphology_params'] = {}
         all_kwargs['source_morphology_params']['asymmetry'] = cosmology_params['cosmos_asymmetry'][galaxy_index]
         all_kwargs['source_morphology_params']['axial_ratio'] = cosmology_params['cosmos_axial_ratio'][galaxy_index]
@@ -429,6 +432,17 @@ class CosmosCatalog(Interpol):
         all_kwargs['source_morphology_params']['m20'] = cosmology_params['cosmos_m20'][galaxy_index]
         all_kwargs['source_morphology_params']['rhalfreal'] = cosmology_params['cosmos_rhalfreal'][galaxy_index]
         all_kwargs['source_morphology_params']['rpetroreal'] = cosmology_params['cosmos_rpetroreal'][galaxy_index]
+        all_kwargs['source_morphology_params']['redshifts'] = z_catalog
+
+        # These are parameters which change with each realization of the same source
+        all_kwargs['source_morphology_params']['amp'] = []
+        all_kwargs['source_morphology_params']['amp'].append(amp2)
+        all_kwargs['source_morphology_params']['angle'] = []
+        all_kwargs['source_morphology_params']['angle'].append(all_kwargs['angle'])
+        all_kwargs['source_morphology_params']['center_x'] = []
+        all_kwargs['source_morphology_params']['center_x'].append(all_kwargs['center_x'])
+        all_kwargs['source_morphology_params']['center_y'] = []
+        all_kwargs['source_morphology_params']['center_y'].append(all_kwargs['center_y'])
 
         return all_kwargs
 
